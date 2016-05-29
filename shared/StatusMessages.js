@@ -5,35 +5,41 @@
 	* @module StatusMessages
 */
 const StatusMessages = {
+	/*
+		* @param success {Boolean} was operation successfull
+		* @param code {String} CONST for translating error on device
+		* @param message {String} error message
+	*/
 	EMAIL_IS_NOT_VALID: {
-		status: false,
-		error: {
-			code: 'EMAIL_IS_NOT_VALID',
-			message: 'Email is not valid, please try again with another one.'
-		}
+		success: false,
+		code: 'EMAIL_IS_NOT_VALID',
+		message: 'Email is not valid, please try again with another one.'
 	},
 	REQUIRED_FIELDS_MISSING: {
-		status: false,
-		error: {
-			code: 'REQUIRED_FIELDS_MISSING',
-			message: 'Email or password is missing.'
-		}
+		success: false,
+		code: 'REQUIRED_FIELDS_MISSING',
+		message: 'Email or password is missing.'
 	},
 	EMAIL_IS_NOT_AVAILABLE: {
-		status: false,
-		error: {
-			code: 'EMAIL_IS_NOT_AVAILABLE',
-			message: 'Email is not available.'
-		}
+		success: false,
+		code: 'EMAIL_IS_NOT_AVAILABLE',
+		message: 'Email is not available.'
 	},
 	USER_DOES_NOT_EXISTS: {
-		status: false,
-		error: {
-			code: 'USER_DOES_NOT_EXISTS',
-			message: 'User with this email and password does not exists.'
-		}
+		success: false,
+		code: 'USER_DOES_NOT_EXISTS',
+		message: 'User with this email and password does not exists.'
+	},
+	INTERNAL_ERROR: {
+		success: false,
+		code: 'INTERNAL_ERROR',
+		message: 'Something is wrong, please try this operation later.'
+	},
+	REGISTER_SUCCESSFULL: {
+		success: true,
+		code: 'REGISTER_SUCCESSFULL',
+		message: 'User was register.'
 	}
-
 };
 
 module.exports = StatusMessages;

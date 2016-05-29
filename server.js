@@ -33,7 +33,7 @@ router.route('/accounts')
 			if(err) {
 				// Log this situation
 				ErrorLogger.addErrorMessage(err);
-				return res.json({status: false});
+				return res.send(500).json(StatusMessages.INTERNAL_ERROR);
 			}
 			res.json(accounts.map(function(item){
 				return {
@@ -69,9 +69,9 @@ router.route('/accounts')
 				if(err){
 					// Log this situation
 					ErrorLogger.addErrorMessage(err);
-					return res.json({status: false});
+					return res.send(500).json(StatusMessages.INTERNAL_ERROR);
 				}
-				res.json({status: true});
+				res.json(StatusMessages.REGISTER_SUCCESSFULL);
 			});
 		});
 	})
@@ -102,6 +102,7 @@ router.route('/accounts/login')
 		});
 	})
 
+// lets init router for /api
 app.use('/api', router);
 
 app.listen(3000, function () {
