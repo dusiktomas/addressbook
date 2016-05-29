@@ -1,5 +1,4 @@
 'use strict';
-
 /*
 	* This module is in charge of handling status messages
 	* @module StatusMessages

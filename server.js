@@ -8,6 +8,7 @@ var express = require('express'),
 		config = require('./config'),
 		StatusMessages = require('./shared/StatusMessages'),
 		ErrorLogger = require('./shared/ErrorLogger'),
+		Helper = require('./shared/Helper'),
 		app = express();
 
 app.use(bodyParser.urlencoded({
@@ -28,125 +29,20 @@ db.once('open', function(){
 
 var router = express.Router();
 
-router.route('/accounts')
-	// READ
-	.get(function (req, res) {
-		res.setHeader("Access-Control-Allow-Origin", "*");
-		Account.find(function(err, accounts){
-			if(err) {
-				// Log this situation
-				ErrorLogger.addErrorMessage(err);
-				return res.send(500).json(StatusMessages.INTERNAL_ERROR);
-			}
-			res.json(accounts.map(function(item){
-				return {
-					id: item._id,
-					email: item.email
-				}
-			}));
-		});
-	})
+/* GLOBAL ROUTES - NO NEED TO AUTH */
+// create account {POST}
+router.route('/accounts').post(Helper.createAccount.bind(Helper));
 
-	// CREATE
-	.post(function (req, res) {
-		// Allow for all devices and clients comunicate with our api
-		res.setHeader("Access-Control-Allow-Origin", "*");
-		var account = new Account(req.body);
-		if( ! account.hasRequiredFields()){
-			return res.json(StatusMessages.REQUIRED_FIELDS_MISSING);
-		}
-		if( ! account.isEmailValid()){
-			return res.json(StatusMessages.EMAIL_IS_NOT_VALID);
-		}
-		account.isEmailFreeToUse(function(err){
-			if(err){
-				return res.json(StatusMessages.EMAIL_IS_NOT_AVAILABLE);
-			}
-			/*
-				* Important!
-				* Password was sent in plain text, we count with secure connectin (SSL...)
-				* If we cannot secure our connection, consider encrypt password on client
-			*/
-			account.encryptPassword();
-			account.save(function(err){
-				if(err){
-					// Log this situation
-					ErrorLogger.addErrorMessage(err);
-					return res.send(500).json(StatusMessages.INTERNAL_ERROR);
-				}
-				res.json(StatusMessages.REGISTER_SUCCESSFULL);
-			});
-		});
-	})
+// login user {POST}
+router.route('/accounts/login').post(Helper.loginUser.bind(Helper));
 
-router.route('/accounts/login')
-	// LOGIN USER
-	.post(function (req, res) {
-		// Allow for all devices and clients comunicate with our api
-		res.setHeader("Access-Control-Allow-Origin", "*");
-		var account = new Account(req.body);
-		if( ! account.hasRequiredFields()){
-			return res.json(StatusMessages.REQUIRED_FIELDS_MISSING);
-		}
-		if( ! account.isEmailValid()){
-			return res.json(StatusMessages.EMAIL_IS_NOT_VALID);
-		}
-		/*
-			* Important!
-			* Password was sent in plain text, we count with secure connectin (SSL...)
-			* If we cannot secure our connection, consider encrypt password on client
-		*/
-		account.encryptPassword();
-		account.validateLogin(function(err){
-			if(err){
-				return res.json(StatusMessages.USER_DOES_NOT_EXISTS);
-			}
-			// create auth token
-			var token = jwt.sign({
-				email: account.getEmail(),
-				id: account.getAccountId()
-			}, app.get('secureSecret'), {
-				expiresIn: '60m' // expires in 60 minutes
-			});
 
-			res.json(Object.assign(StatusMessages.LOGIN_SUCCESSFULL, {
-				authToken: token
-			}));
-		});
-	})
-
+/* AUTH REQUIRE ROUTES - AUTH IS NEEDED */
 // route middleware to verify a token for auth routes
-router.use(function(req, res, next) {
-	// Allow for all devices and clients comunicate with our api
-	res.setHeader("Access-Control-Allow-Origin", "*");
-	/*
-		* We are considering WEB applications and mobile etc... which can send authToken 
-		* in json or in headers
-	*/
-	var token = req.body.authToken || req.headers['x-auth-token'];
-	if( ! token){
-		return res.status(403).send(StatusMessages.NO_AUTH_TOKEN);
-	}
+router.use(Helper.verifyAuthToken.bind(Helper));
 
-	jwt.verify(token, app.get('secureSecret'), function(err, decoded) {
-		if(err){
-			return res.status(403).send(StatusMessages.AUTH_ERROR);
-		}
-		req.account = decoded;
-		// continue routing
-		next();
-	});
-
-});
-
-router.route('/accounts/auth/create-contact')
-
-	// Create new address
-	.post(function (req, res) {
-		var account = req.account;
-		console.log(account);
-		res.json({foo: 'bar'});
-	})
+// create contact {POST} - auth
+router.route('/accounts/auth/create-contact').post(Helper.createContact.bind(Helper));
 
 // lets init router for /api
 app.use('/api', router);

@@ -1,5 +1,4 @@
 'use strict';
-
 /*
 	* Account model (Active Record)
 	* @module Model
