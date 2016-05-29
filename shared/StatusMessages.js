@@ -35,6 +35,21 @@ const StatusMessages = {
 		code: 'INTERNAL_ERROR',
 		message: 'Something is wrong, please try this operation later.'
 	},
+	AUTH_ERROR: {
+		success: false,
+		code: 'AUTH_ERROR',
+		message: 'Bad auth token'
+	},
+	NO_AUTH_TOKEN: {
+		success: false,
+		code: 'NO_AUTH_TOKEN',
+		message: 'Auth token is missing in headers or in json'
+	},
+	LOGIN_SUCCESSFULL: {
+		success: true,
+		code: 'LOGIN_SUCCESSFULL',
+		message: 'User was successfully logged in.'
+	},
 	REGISTER_SUCCESSFULL: {
 		success: true,
 		code: 'REGISTER_SUCCESSFULL',

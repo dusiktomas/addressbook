@@ -16,6 +16,25 @@ var accountSchema = mongoose.Schema({
 });
 
 /*
+	* Getter for account id 
+	* @method getAccountId
+	* @return {String} account Id 
+*/
+accountSchema.methods.getAccountId = function(){
+	return this._id;
+};
+
+/*
+	* Getter for email 
+	* @method getEmail
+	* @return {String} email 
+*/
+accountSchema.methods.getEmail = function(){
+	return this.email;
+};
+
+
+/*
 	* This method is for model validation 
 	* @method hasRequiredFields
 	* @return {Boolean} has required fields 
