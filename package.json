@@ -1,0 +1,22 @@
+{
+  "name": "Lalalalala",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {},
+  "dependencies": {
+    "assert": "^1.4.0",
+    "body-parser": "^1.15.1",
+    "consolidate": "^0.14.1",
+    "crypto": "0.0.3",
+    "express": "^4.13.4",
+    "mongoose": "^4.4.19",
+    "twig": "^0.9.5"
+  }
+}
