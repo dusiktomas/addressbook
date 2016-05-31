@@ -1,6 +1,7 @@
 'use strict';
 
 var express = require('express'),
+		Firebase = require('firebase'),
 		bodyParser = require('body-parser'),
 		mongoose = require('mongoose'),
 		jwt = require('jsonwebtoken'),
@@ -20,34 +21,39 @@ app.set('secureSecret', config.secureSecret);
 
 // connect to db
 mongoose.connect(config.database);
+// connect to FireBase
+Firebase.initializeApp({
+  serviceAccount: '/home/thomas/Documents/projects/addressbook/adressbook-acc1e03b83c8.json',
+  databaseURL: 'https://adressbook-65009.firebaseio.com/'
+});
 
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error: '));
 db.once('open', function(){
 	console.log('db success');
+  var router = express.Router();
+
+  /* GLOBAL ROUTES - NO NEED TO AUTH */
+  // create account {POST}
+  router.route('/accounts').post(Helper.createAccount.bind(Helper));
+
+  // login user {POST}
+  router.route('/accounts/login').post(Helper.loginUser.bind(Helper));
+
+
+  /* AUTH REQUIRE ROUTES - AUTH IS NEEDED */
+  // route middleware to verify a token for auth routes
+  router.use(Helper.verifyAuthToken.bind(Helper));
+
+  // create contact {POST} - auth
+  router.route('/accounts/auth/create-contact').post(Helper.createContact.bind(Helper));
+
+  // lets init router for /api
+  app.use('/api', router);
+
+  const port = process.env.PORT || 3000; 
+  app.listen(port, function () {
+    console.log(`AdressBook api listening on port ${port}!`);
+  });
 });
 
-var router = express.Router();
-
-/* GLOBAL ROUTES - NO NEED TO AUTH */
-// create account {POST}
-router.route('/accounts').post(Helper.createAccount.bind(Helper));
-
-// login user {POST}
-router.route('/accounts/login').post(Helper.loginUser.bind(Helper));
-
-
-/* AUTH REQUIRE ROUTES - AUTH IS NEEDED */
-// route middleware to verify a token for auth routes
-router.use(Helper.verifyAuthToken.bind(Helper));
-
-// create contact {POST} - auth
-router.route('/accounts/auth/create-contact').post(Helper.createContact.bind(Helper));
-
-// lets init router for /api
-app.use('/api', router);
-
-const port = process.env.PORT || 3000; 
-app.listen(port, function () {
-  console.log(`AdressBook api listening on port ${port}!`);
-});

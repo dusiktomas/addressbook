@@ -49,6 +49,11 @@ const StatusMessages = {
 		code: 'LOGIN_SUCCESSFULL',
 		message: 'User was successfully logged in.'
 	},
+	INVALID_CONTACT: {
+		success: false,
+		code: 'INVALID_CONTACT',
+		message: 'Contact has invalid format.'
+	}
 	REGISTER_SUCCESSFULL: {
 		success: true,
 		code: 'REGISTER_SUCCESSFULL',

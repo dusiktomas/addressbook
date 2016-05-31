@@ -1,6 +1,7 @@
 'use strict';
 
 var jwt = require('jsonwebtoken'),
+		Firebase = require('firebase'),
 		Account = require('../model/Account'),
 		config = require('../config'),
 		StatusMessages = require('./StatusMessages'),
@@ -129,7 +130,16 @@ class Helper {
 	*/
 	static createContact(req, res) {
 		var account = req.account;
-		res.json(account);
+		var contact = new Contact(req.body);
+		if( ! contact.isValid){
+			return res.send(StatusMessages.INVALID_CONTACT);
+		}
+		var ref = Firebase.database().ref('users/' + account.id);
+		ref.push().set({
+			author: "alanisawesome",
+			title: "The Turing Machine"
+		});
+		return res.json(account);
 	};
 };
 
