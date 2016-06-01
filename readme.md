@@ -32,6 +32,10 @@ You can run this app with setting the environment variables:
 ```
 SERVICE_ACCOUNT='/home/profile/addressbook/server/adressbook-acc1e03b83c8.json' MONGO_DB='mongodb://user:pwd@ds029224.mlab.com:29224/addressbook' node server.js
 ```
+even testing is possible
+```
+SERVER_URL='http://<host>:3000' mocha test-api.js
+```
 
 ### New language features
 Love that.
