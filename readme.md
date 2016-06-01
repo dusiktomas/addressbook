@@ -30,9 +30,7 @@ As you can see, nothing is hard-coded.
 All databases setup and configs depends on environment
 You can run this app with setting the environment variables:
 ```
-git status
-git add
-git commit
+SERVICE_ACCOUNT='/home/profile/addressbook/server/adressbook-acc1e03b83c8.json' MONGO_DB='mongodb://user:pwd@ds029224.mlab.com:29224/addressbook' node server.js
 ```
 
 ### New language features
