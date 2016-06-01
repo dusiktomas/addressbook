@@ -1,0 +1,7 @@
+{
+  "name": "Address Book v1.0",
+  "version": "1.0.0",
+  "description": "All requests and responses are in JSON Format. When error occurs, response body structure is the same as success body.",
+  "title": "Address Book by Thomas Dusik",
+  "url" : ""
+}

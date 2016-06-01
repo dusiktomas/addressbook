@@ -25,14 +25,14 @@ class Helper {
 		res.setHeader("Access-Control-Allow-Origin", "*");
 		var account = new Account(req.body);
 		if( ! account.hasRequiredFields()){
-			return res.json(StatusMessages.REQUIRED_FIELDS_MISSING);
+			return res.status(409).json(StatusMessages.REQUIRED_FIELDS_MISSING);
 		}
 		if( ! account.isEmailValid()){
-			return res.json(StatusMessages.EMAIL_IS_NOT_VALID);
+			return res.status(409).json(StatusMessages.EMAIL_IS_NOT_VALID);
 		}
 		account.isEmailFreeToUse(function(err){
 			if(err){
-				return res.json(StatusMessages.EMAIL_IS_NOT_AVAILABLE);
+				return res.status(409).json(StatusMessages.EMAIL_IS_NOT_AVAILABLE);
 			}
 			/*
 				* Important!
@@ -44,7 +44,7 @@ class Helper {
 				if(err){
 					// Log this situation
 					ErrorLogger.addErrorMessage(err);
-					return res.send(500).json(StatusMessages.INTERNAL_ERROR);
+					return res.status(500).json(StatusMessages.INTERNAL_ERROR);
 				}
 				res.json(StatusMessages.REGISTER_SUCCESSFULL);
 			});
@@ -62,10 +62,10 @@ class Helper {
 		res.setHeader("Access-Control-Allow-Origin", "*");
 		var account = new Account(req.body);
 		if( ! account.hasRequiredFields()){
-			return res.json(StatusMessages.REQUIRED_FIELDS_MISSING);
+			return res.status(409).json(StatusMessages.REQUIRED_FIELDS_MISSING);
 		}
 		if( ! account.isEmailValid()){
-			return res.json(StatusMessages.EMAIL_IS_NOT_VALID);
+			return res.status(409).json(StatusMessages.EMAIL_IS_NOT_VALID);
 		}
 		/*
 			* Important!
@@ -75,7 +75,7 @@ class Helper {
 		account.encryptPassword();
 		account.validateLogin(function(err){
 			if(err){
-				return res.json(StatusMessages.USER_DOES_NOT_EXISTS);
+				return res.status(400).json(StatusMessages.USER_DOES_NOT_EXISTS);
 			}
 			// create auth token
 			const EXPIRE_TIME = '60m'; // expires in 60 minutes
@@ -133,7 +133,7 @@ class Helper {
 		var account = req.account;
 		var contact = new Contact(req.body);
 		if( ! contact.isValid()){
-			return res.send(StatusMessages.INVALID_CONTACT);
+			return res.status(409).send(StatusMessages.INVALID_CONTACT);
 		}
 		var ref = Firebase.database().ref('users/' + account.id);
 		ref.push().set(contact.getContactObject());
