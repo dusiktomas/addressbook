@@ -20,7 +20,7 @@ app.use(bodyParser.json());
 app.set('secureSecret', config.secureSecret);
 
 // connect to db
-mongoose.connect(process.env.MONGO_DB || config.database);
+mongoose.connect(process.env.MONGO_DB || 'mongodb://localhost:27017/test');
 // connect to FireBase
 Firebase.initializeApp({
   serviceAccount: process.env.SERVICE_ACCOUNT || '/home/thomas/Documents/projects/addressbook/adressbook-acc1e03b83c8.json',
