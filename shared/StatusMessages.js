@@ -53,7 +53,12 @@ const StatusMessages = {
 		success: false,
 		code: 'INVALID_CONTACT',
 		message: 'Contact has invalid format.'
-	}
+	},
+	CONTACT_CREATE_SUCCESS: {
+		success: true,
+		code: 'CONTACT_CREATE_SUCCESS',
+		message: 'Contact was register.'
+	},
 	REGISTER_SUCCESSFULL: {
 		success: true,
 		code: 'REGISTER_SUCCESSFULL',

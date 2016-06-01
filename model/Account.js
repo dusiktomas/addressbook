@@ -5,9 +5,10 @@
 */
 
 // components
-var mongoose = require('mongoose');
-var ErrorLogger = require('../shared/ErrorLogger');
-var crypto = require('crypto');
+var mongoose = require('mongoose'),
+    ErrorLogger = require('../shared/ErrorLogger'),
+    Validator = require('../shared/Validator'),
+    crypto = require('crypto');
 
 var accountSchema = mongoose.Schema({
 	email: String,
@@ -99,11 +100,7 @@ accountSchema.methods.validateLogin = function(cb){
 	* @return {Boolean} is email address valid
 */
 accountSchema.methods.isEmailValid = function(){
-	/*
-	 * Just do simple regex test
-	 * No, guarantee that email box exists
-	*/
-	return this.email.match(/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/);
+  return Validator.isEmailValid(this.email);
 };
 
 /*
