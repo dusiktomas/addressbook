@@ -21,8 +21,6 @@ class Authorization {
 		* @param next {Function} next route 
 	*/
 	static verifyAuthToken(req, res, next) {
-		// Allow for all devices and clients comunicate with our api
-		res.setHeader("Access-Control-Allow-Origin", "*");
 		/*
 			* We are considering WEB applications and mobile etc... which can send authToken 
 		*/

@@ -8,7 +8,7 @@ var config = require('../config');
 var Contact = require('./Contact');
 
 /*
-	* ContactManager for working with {Account} model
+	* ContactManager for working with {Contact} model
 	* @module Model
 */
 

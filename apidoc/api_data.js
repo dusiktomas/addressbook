@@ -176,6 +176,13 @@ define({ "api": [
             "optional": false,
             "field": "authToken",
             "description": "<p>Auth token for authentication to the server</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "account",
+            "description": "<p>Acciybt information</p>"
           }
         ]
       }

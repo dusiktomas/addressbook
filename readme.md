@@ -3,25 +3,29 @@ Simple REST Api build on Express.
 
 ### 🔥 Code quality
 
-Code styling is consistent (i hope so).
-Accounts and Contacts are stored in model folder with the right relevant methods.
-StatusMessages class handling json responses and for better readability there is a Helper.
+Code styling is consistent and follow RisingStack style https://github.com/RisingStack/node-style-guide.
+Accounts and Contacts are stored in model folder with the right methods and relevant managers.
+StatusMessages class handle HTTP Body responses {json format}.
+For authorization purposes, there is a middleware.
 There is more, u can check.
 
 ### 🔥 Security
 
 Password should be encrypted
-In order to secure our password in case of waterfall effect (db dump cracking passwords)
+In order to secure our password in case of rainbow attack.
 I am using "email:password" method with creating sha256 hash 
 
 ### 🔥 Testability
 
-For testing purposes, i am using mocha with superagent + should.
-These are powerfull weapons.
+For testing purposes, i am using mocha with superagent + should libraries.
+You can check test-api file.
+```
+SERVER_URL='http://localhost:3000' mocha test-api.js 
+```
 
 ### API structure and usability
 
-API is structured by defining cascading routes.
+API is structured by defining cascading routes which should follow best practice patterns.
 HTTP response codes should follow [rfc2616] principes.
 
 ### Development and deployment

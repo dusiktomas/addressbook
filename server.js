@@ -32,6 +32,12 @@ db.once('open', function(){
 	console.log('db success');
 	var router = express.Router();
 
+  router.use(function(req, res, next){
+		// Allow for all devices and clients comunicate with our api
+		res.setHeader("Access-Control-Allow-Origin", "*");
+    next();
+  });
+
 	/* GLOBAL ROUTES - NO NEED TO AUTH */
 		/**
 			* @api {post} /api/accounts create account 
@@ -58,8 +64,6 @@ db.once('open', function(){
 			* @apiError (Internal error 500) INTERNAL_ERROR <code>500</code> Something is wrong, please try this operation later.
 		*/
 		router.route('/accounts').post(function(req, res){
-			// Allow for all devices and clients comunicate with our api
-			res.setHeader("Access-Control-Allow-Origin", "*");
 			AccountManager.createAccount(req.body, function(err){
 				if(err){
 					switch(err.message){
@@ -96,15 +100,13 @@ db.once('open', function(){
 			* @apiSuccess {String} code Constant for translation purposes 
 			* @apiSuccess {String} message Response message 
 			* @apiSuccess {String} authToken Auth token for authentication to the server 
-			* @apiSuccess {Object} authToken Auth token for authentication to the server 
+			* @apiSuccess {Object} account Acciybt information 
 			* @apiError REQUIRED_FIELDS_MISSING <code>409</code> Email or password is missing..
 			* @apiError EMAIL_IS_NOT_VALID <code>409</code> Email address is not valid. 
 			* @apiError USER_DOES_NOT_EXISTS <code>409</code> User with this credentials not exists. 
 			* @apiError (Internal error 500) INTERNAL_ERROR <code>500</code> Something is wrong, please try this operation later.
 		*/
 		router.route('/accounts/login').post(function(req, res){
-			// Allow for all devices and clients comunicate with our api
-			res.setHeader("Access-Control-Allow-Origin", "*");
 			AccountManager.loginAccount(req.body, function(err, userInfo){
 				if(err){
 					switch(err.message){
@@ -160,8 +162,6 @@ db.once('open', function(){
 			if( ! req.account || ! req.account.id){
 				return res.status(403).json(StatusMessages.AUTH_ERROR);
 			}
-			// Allow for all devices and clients comunicate with our api
-			res.setHeader("Access-Control-Allow-Origin", "*");
 			ContactManager.createContact(req.account.id, req.body, function(err, contactInfo){
 				if(err){
 					switch(err.message){
