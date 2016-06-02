@@ -1,16 +1,17 @@
 'use strict';
 
-var express = require('express'),
-		Firebase = require('firebase'),
-		bodyParser = require('body-parser'),
-		mongoose = require('mongoose'),
-		jwt = require('jsonwebtoken'),
-		Account = require('./model/Account'),
-		config = require('./config'),
-		StatusMessages = require('./shared/StatusMessages'),
-		ErrorLogger = require('./shared/ErrorLogger'),
-		Helper = require('./shared/Helper'),
-		app = express();
+// core
+var express = require('express');
+var app = express();
+var Firebase = require('firebase');
+var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
+
+var AccountManager = require('./model/AccountManager');
+var ContactManager = require('./model/ContactManager');
+var StatusMessages = require('./shared/StatusMessages');
+var ErrorLogger = require('./shared/ErrorLogger');
+var Authorization = require('./middlewares/Authorization');
 
 app.use(bodyParser.urlencoded({
 	extended: true
@@ -56,7 +57,25 @@ db.once('open', function(){
 			* @apiError EMAIL_IS_NOT_AVAILABLE <code>409</code> Email is in use. 
 			* @apiError (Internal error 500) INTERNAL_ERROR <code>500</code> Something is wrong, please try this operation later.
 		*/
-		router.route('/accounts').post(Helper.createAccount.bind(Helper));
+		router.route('/accounts').post(function(req, res){
+			// Allow for all devices and clients comunicate with our api
+			res.setHeader("Access-Control-Allow-Origin", "*");
+			AccountManager.createAccount(req.body, function(err){
+				if(err){
+					switch(err.message){
+						case 'REQUIRED_FIELDS_MISSING':
+							return res.status(409).json(StatusMessages.REQUIRED_FIELDS_MISSING);
+						case 'EMAIL_IS_NOT_VALID':
+							return res.status(409).json(StatusMessages.EMAIL_IS_NOT_VALID);
+						case 'EMAIL_IS_NOT_AVAILABLE':
+							return res.status(409).json(StatusMessages.EMAIL_IS_NOT_AVAILABLE);
+						default: 
+							return res.status(500).json(StatusMessages.INTERNAL_ERROR);
+					}
+				}
+				res.json(StatusMessages.REGISTER_SUCCESSFULL);
+			});
+		});
 		/**
 			* @api {post} /api/accounts/login login account 
 			* @apiName LoginAccount
@@ -77,28 +96,47 @@ db.once('open', function(){
 			* @apiSuccess {String} code Constant for translation purposes 
 			* @apiSuccess {String} message Response message 
 			* @apiSuccess {String} authToken Auth token for authentication to the server 
+			* @apiSuccess {Object} authToken Auth token for authentication to the server 
 			* @apiError REQUIRED_FIELDS_MISSING <code>409</code> Email or password is missing..
 			* @apiError EMAIL_IS_NOT_VALID <code>409</code> Email address is not valid. 
 			* @apiError USER_DOES_NOT_EXISTS <code>409</code> User with this credentials not exists. 
 			* @apiError (Internal error 500) INTERNAL_ERROR <code>500</code> Something is wrong, please try this operation later.
 		*/
-		router.route('/accounts/login').post(Helper.loginUser.bind(Helper));
+		router.route('/accounts/login').post(function(req, res){
+			// Allow for all devices and clients comunicate with our api
+			res.setHeader("Access-Control-Allow-Origin", "*");
+			AccountManager.loginAccount(req.body, function(err, userInfo){
+				if(err){
+					switch(err.message){
+						case 'REQUIRED_FIELDS_MISSING':
+							return res.status(409).json(StatusMessages.REQUIRED_FIELDS_MISSING);
+						case 'EMAIL_IS_NOT_VALID':
+							return res.status(409).json(StatusMessages.EMAIL_IS_NOT_VALID);
+						case 'USER_DOES_NOT_EXISTS':
+							return res.status(400).json(StatusMessages.USER_DOES_NOT_EXISTS);
+						default: 
+							return res.status(500).json(StatusMessages.INTERNAL_ERROR);
+					}
+				}
+				res.json(Object.assign(StatusMessages.LOGIN_SUCCESSFULL, userInfo));
+			});
+		});
 
 
 	/* AUTH REQUIRE ROUTES - AUTH IS NEEDED */
 		// route middleware to verify a token for auth routes
-		router.use(Helper.verifyAuthToken.bind(Helper));
+		router.use(Authorization.verifyAuthToken.bind(Authorization));
 
 		/**
-			* @api {post} /api/accounts/auth/create-contact create contact for account 
+			* @api {post} /api/contact create contact for account 
 			* @apiName CreateContact
 			* @apiheaderexample {json} request header:
 			*     {
 			*       "content-type": "application/json",
-			*       "x-auth-token": "authorization key " (you can pass it here or to json in body)
+			*       "x-auth-token": "authorization key "
 			*     }
 			*
-			* @apiGroup auth
+			* @apiGroup contact
 			*
 			* @apiParam {String} fullName Name and surname of contact 
 			* @apiParam {String} email Email of contact
@@ -108,16 +146,34 @@ db.once('open', function(){
 			*       "fullName": "John Newman",
 			*       "email": "john.newman@gmail.com",
 			*       "phone": "775 542 556",
-			*       "authToken": "authorization key" (you can pass it here or to headers)
 			*     }
 			* @apiSuccess {Boolean} success Was operation successfull 
 			* @apiSuccess {String} code Constant for translation purposes 
 			* @apiSuccess {String} message Response message 
+			* @apiSuccess {Object} contact Contact information 
 			* @apiError INVALID_CONTACT <code>409</code> Contact has invalid format, check email format and others...
 			* @apiError NO_AUTH_TOKEN <code>403</code> Auth token is missing in headers or in json.
 			* @apiError AUTH_ERROR <code>403</code> Bad auth token.
+			* @apiError (Internal error 500) INTERNAL_ERROR <code>500</code> Something is wrong, please try this operation later.
 		*/
-		router.route('/accounts/auth/create-contact').post(Helper.createContact.bind(Helper));
+		router.route('/contact').post(function(req, res){
+			if( ! req.account || ! req.account.id){
+				return res.status(403).json(StatusMessages.AUTH_ERROR);
+			}
+			// Allow for all devices and clients comunicate with our api
+			res.setHeader("Access-Control-Allow-Origin", "*");
+			ContactManager.createContact(req.account.id, req.body, function(err, contactInfo){
+				if(err){
+					switch(err.message){
+						case 'INVALID_CONTACT':
+							return res.status(409).send(StatusMessages.INVALID_CONTACT);
+						default: 
+							return res.status(500).json(StatusMessages.INTERNAL_ERROR);
+					}
+				}
+				res.json(Object.assign(StatusMessages.CONTACT_CREATE_SUCCESS, {contact: contactInfo}));
+			});
+		});
 
 	// lets init router for /api
 	app.use('/api', router);

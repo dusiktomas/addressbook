@@ -7,9 +7,13 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
+	"engines": {
+		"node": ">3.0.0"
+	},
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "mocha": "^1.20.1",
     "randomstring": "^1.1.5",
     "should": "^9.0.0",
     "supertest": "^1.2.0"

@@ -5,10 +5,10 @@
 */
 
 // components
-var mongoose = require('mongoose'),
-    ErrorLogger = require('../shared/ErrorLogger'),
-    Validator = require('../shared/Validator'),
-    crypto = require('crypto');
+var mongoose = require('mongoose');
+var ErrorLogger = require('../shared/ErrorLogger');
+var Validator = require('../shared/Validator');
+var crypto = require('crypto');
 
 var accountSchema = mongoose.Schema({
 	email: String,
@@ -57,15 +57,12 @@ accountSchema.methods.isEmailFreeToUse = function(cb){
 		}
 		if(emails.length === 0){
 			// yea, that is ok
-			return cb(false);
+			return cb(null);
 		}
-		if(emails.length > 1){
-			// that is not ok
-			ErrorLogger.addErrorMessage('Fatal error: more than one email in DB!');
-			return cb(true);
-		}
-		// should not happen
-		cb(true);
+		// that is not ok
+		var errorMessage = 'Fatal error: more than one email in DB!'; 
+		ErrorLogger.addErrorMessage(errorMessage);
+		return cb(new Error(errorMessage));
 	});
 };
 
@@ -81,18 +78,18 @@ accountSchema.methods.validateLogin = function(cb){
 		}
 		if(emails.length === 0){
 			// user does not exists
-			return cb(true);
+			return cb(new Error('User does not exists'));
 		}
 		if(emails.length > 1){
 			// that is not ok, just pretend user does not exists and fix this!
-			ErrorLogger.addErrorMessage('Fatal error: more than one email in DB!');
-			return cb(true);
+			var errorMessage ='Fatal error: more than one email in DB!'; 
+			ErrorLogger.addErrorMessage(errorMessage);
+			return cb(new Error(errorMessage));
 		}
 		// user exists
-		cb(false);
+		cb(null);
 	});
 };
-
 
 /*
 	* This method is for email validation 
@@ -111,7 +108,7 @@ accountSchema.methods.isEmailValid = function(){
 accountSchema.methods.encryptPassword = function(){
 	/*
 		* Password should be encrypted
-		* In order to secure our password in case of waterfall effect (db dump cracking passwords)
+		* In order to secure our password in case of rainbow (db dump cracking passwords)
 		* we use "email:password" method with creating sha256 hash 
 		* 
 	*/

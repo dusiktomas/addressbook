@@ -218,19 +218,19 @@ define({ "api": [
   },
   {
     "type": "post",
-    "url": "/api/accounts/auth/create-contact",
+    "url": "/api/contact",
     "title": "create contact for account",
     "name": "CreateContact",
     "header": {
       "examples": [
         {
           "title": "request header:",
-          "content": "{\n  \"content-type\": \"application/json\",\n  \"x-auth-token\": \"authorization key \" (you can pass it here or to json in body)\n}",
+          "content": "{\n  \"content-type\": \"application/json\",\n  \"x-auth-token\": \"authorization key \"\n}",
           "type": "json"
         }
       ]
     },
-    "group": "auth",
+    "group": "contact",
     "parameter": {
       "fields": {
         "Parameter": [
@@ -260,7 +260,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Request-Example:",
-          "content": "{\n  \"fullName\": \"John Newman\",\n  \"email\": \"john.newman@gmail.com\",\n  \"phone\": \"775 542 556\",\n  \"authToken\": \"authorization key\" (you can pass it here or to headers)\n}",
+          "content": "{\n  \"fullName\": \"John Newman\",\n  \"email\": \"john.newman@gmail.com\",\n  \"phone\": \"775 542 556\",\n}",
           "type": "json"
         }
       ]
@@ -288,6 +288,13 @@ define({ "api": [
             "optional": false,
             "field": "message",
             "description": "<p>Response message</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "contact",
+            "description": "<p>Contact information</p>"
           }
         ]
       }
@@ -313,11 +320,19 @@ define({ "api": [
             "field": "AUTH_ERROR",
             "description": "<p><code>403</code> Bad auth token.</p>"
           }
+        ],
+        "Internal error 500": [
+          {
+            "group": "Internal error 500",
+            "optional": false,
+            "field": "INTERNAL_ERROR",
+            "description": "<p><code>500</code> Something is wrong, please try this operation later.</p>"
+          }
         ]
       }
     },
     "version": "0.0.0",
     "filename": "temp/server.js",
-    "groupTitle": "auth"
+    "groupTitle": "contact"
   }
 ] });
