@@ -64,7 +64,7 @@ db.once('open', function(){
 			* @apiError (Internal error 500) INTERNAL_ERROR <code>500</code> Something is wrong, please try this operation later.
 		*/
 		router.route('/accounts').post(function(req, res){
-			AccountManager.createAccount(req.body, function(err){
+			AccountManager.createAccount(req.body, function(err, account){
 				if(err){
 					switch(err.message){
 						case 'REQUIRED_FIELDS_MISSING':
@@ -77,6 +77,7 @@ db.once('open', function(){
 							return res.status(500).json(StatusMessages.INTERNAL_ERROR);
 					}
 				}
+				// we can send account info to the user @account
 				res.json(StatusMessages.REGISTER_SUCCESSFULL);
 			});
 		});

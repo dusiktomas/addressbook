@@ -41,7 +41,7 @@ class AccountManager {
 					ErrorLogger.addErrorMessage(err);
 					return cb(new Error('INTERNAL_ERROR'));
 				}
-				return cb(null);
+				return cb(null, account);
 			});
 		});
 	};
