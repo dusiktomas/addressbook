@@ -218,7 +218,7 @@ define({ "api": [
   },
   {
     "type": "post",
-    "url": "/api/contact",
+    "url": "/api/contacts",
     "title": "create contact for account",
     "name": "CreateContact",
     "header": {
@@ -230,7 +230,7 @@ define({ "api": [
         }
       ]
     },
-    "group": "contact",
+    "group": "contacts",
     "parameter": {
       "fields": {
         "Parameter": [
@@ -333,6 +333,6 @@ define({ "api": [
     },
     "version": "0.0.0",
     "filename": "temp/server.js",
-    "groupTitle": "contact"
+    "groupTitle": "contacts"
   }
 ] });
