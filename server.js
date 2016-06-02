@@ -128,7 +128,7 @@ db.once('open', function(){
 		router.use(Authorization.verifyAuthToken.bind(Authorization));
 
 		/**
-			* @api {post} /api/contact create contact for account 
+			* @api {post} /api/contacts create contact for account 
 			* @apiName CreateContact
 			* @apiheaderexample {json} request header:
 			*     {
@@ -136,7 +136,7 @@ db.once('open', function(){
 			*       "x-auth-token": "authorization key "
 			*     }
 			*
-			* @apiGroup contact
+			* @apiGroup contacts
 			*
 			* @apiParam {String} fullName Name and surname of contact 
 			* @apiParam {String} email Email of contact
@@ -156,7 +156,7 @@ db.once('open', function(){
 			* @apiError AUTH_ERROR <code>403</code> Bad auth token.
 			* @apiError (Internal error 500) INTERNAL_ERROR <code>500</code> Something is wrong, please try this operation later.
 		*/
-		router.route('/contact').post(function(req, res){
+		router.route('/contacts').post(function(req, res){
 			if( ! req.account || ! req.account.id){
 				return res.status(403).json(StatusMessages.AUTH_ERROR);
 			}

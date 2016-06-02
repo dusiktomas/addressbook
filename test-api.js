@@ -8,7 +8,7 @@ describe('API Test',function(){
 
 	describe('Accounts route testing: ', function(){
 
-		it('Should return status 409 and success false, code: REQUIRED_FIELDS_MISSING',function(done){
+		it('Create account, should return status 409 and success false, code: REQUIRED_FIELDS_MISSING',function(done){
 			server
 			.post("/api/accounts")
 			.expect("content-type", 'application/json')
@@ -20,7 +20,7 @@ describe('API Test',function(){
 			});
 		});
 
-		it('Should return status 409 and success false, code: EMAIL_IS_NOT_VALID',function(done){
+		it('Create account, Should return status 409 and success false, code: EMAIL_IS_NOT_VALID',function(done){
 			server
 			.post("/api/accounts")
 			.send({ email: 'tempz', password: 'test'})
@@ -33,9 +33,9 @@ describe('API Test',function(){
 			});
 		});
 
-		it('Should return status 403 and success false, NO_AUTH_TOKEN',function(done){
+		it('Create contact, Should return status 403 and success false, NO_AUTH_TOKEN',function(done){
 			server
-			.post("/api/accounts/auth/create-contact")
+			.post("/api/contacts")
 			.send({ fullName: 'Ferda Novaku', email: 'testssl@gmail.com', phone: '797 645 156'})
 			.expect("content-type", 'application/json')
 			.end(function(err,res){
@@ -47,10 +47,11 @@ describe('API Test',function(){
 			});
 		});
 
-		it('Should return status 403 and success false, AUTH_ERROR',function(done){
+		it('Create contact, Should return status 403 and success false, AUTH_ERROR',function(done){
 			server
-			.post("/api/accounts/auth/create-contact")
-			.send({ fullName: 'Ferda Novaku', email: 'testssl@gmail.com', phone: '797 645 156', authToken: 'asdasdjasdkansdkjasdjkasdjasad'})
+			.post("/api/contacts")
+			.set({'x-auth-token': 'asdasdjasdkansdkjasdjkasdjasad'})
+			.send({ fullName: 'Ferda Novaku', email: 'testssl@gmail.com', phone: '797 645 156'})
 			.expect("content-type", 'application/json')
 			.end(function(err,res){
 				res.status.should.equal(403);
@@ -63,7 +64,7 @@ describe('API Test',function(){
 		
 		
 
-		it('Should return status 409 and success false, code: REQUIRED_FIELDS_MISSING',function(done){
+		it('Create account, Should return status 409 and success false, code: REQUIRED_FIELDS_MISSING',function(done){
 			server
 			.post("/api/accounts")
 			.send({ email: '', password: ''})
@@ -112,8 +113,9 @@ describe('API Test',function(){
 
 			it('Should create contact and return status 200 and success true',function(done){
 				server
-				.post("/api/accounts/auth/create-contact")
-				.send({ fullName: 'Ferda Novaku', email: 'testssl@gmail.com', phone: '797 645 156', authToken: authToken})
+				.post("/api/contacts")
+				.set({'x-auth-token': authToken})
+				.send({ fullName: 'Ferda Novaku', email: 'testssl@gmail.com', phone: '797 645 156'})
 				.expect("content-type", 'application/json')
 				.end(function(err,res){
 					res.status.should.equal(200);
